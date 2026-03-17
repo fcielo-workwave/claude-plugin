@@ -1,0 +1,13 @@
+{
+  "name": "fra-marketplace",
+  "owner": {
+    "name": "fra"
+  },
+  "plugins": [
+    {
+      "name": "fra",
+      "source": "./",
+      "description": "Fra's personal Claude Code skills"
+    }
+  ]
+}
