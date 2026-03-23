@@ -28,8 +28,7 @@ You MUST create a task for each of these items and complete them in order:
 4. **Present design** — in sections scaled to their complexity, get user approval after each section
 5. **Write design doc** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` or user-preferred location
 6. **Spec review loop** — dispatch spec-document-reviewer subagent with precisely crafted review context (never your session history); fix issues and re-dispatch until approved (max 3 iterations, then surface to human)
-7. **User reviews written spec** — ask user to review the spec file before proceeding
-8. **Transition to implementation** — invoke write-plan skill to create implementation plan
+7. **Notify user** — tell the user where the spec was saved and invite them to keep chatting if they want to make changes
 
 ## Process Flow
 
@@ -43,8 +42,7 @@ digraph brainstorming {
     "Write design doc" [shape=box];
     "Spec review loop" [shape=box];
     "Spec review passed?" [shape=diamond];
-    "User reviews spec?" [shape=diamond];
-    "Invoke write-plan skill" [shape=doublecircle];
+    "Notify user of spec location" [shape=doublecircle];
 
     "Explore project context" -> "Ask clarifying questions";
     "Ask clarifying questions" -> "Propose 2-3 approaches";
@@ -55,13 +53,12 @@ digraph brainstorming {
     "Write design doc" -> "Spec review loop";
     "Spec review loop" -> "Spec review passed?";
     "Spec review passed?" -> "Spec review loop" [label="issues found,\nfix and re-dispatch"];
-    "Spec review passed?" -> "User reviews spec?" [label="approved"];
-    "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke write-plan skill" [label="approved"];
+    "Spec review passed?" -> "Notify user of spec location" [label="approved"];
+    "Notify user of spec location" -> "Write design doc" [label="changes requested"];
 }
 ```
 
-**The terminal state is invoking write-plan.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is write-plan.
+**The terminal state is notifying the user.** Tell them where the spec was saved and invite them to keep chatting if they want to make changes.
 
 ## The Process
 
@@ -116,17 +113,12 @@ After writing the spec document:
 2. If Issues Found: fix, re-dispatch, repeat until Approved
 3. If loop exceeds 3 iterations, surface to human for guidance
 
-**User Review Gate:**
-After the spec review loop passes, ask the user to review the written spec before proceeding:
+**Notify the user:**
+After the spec review loop passes:
 
-> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes before we start writing out the implementation plan."
+> "Spec written to `<path>`. Let me know if you'd like to make any changes."
 
-Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
-
-**Implementation:**
-
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+If they request changes, make them and re-run the spec review loop. Otherwise, the brainstorm is complete.
 
 ## Key Principles
 
